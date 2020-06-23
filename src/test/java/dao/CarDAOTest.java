@@ -39,15 +39,9 @@ public class CarDAOTest {
     }
 
     @Test
-    public void update() throws Exception {
-        final Car result = dao.readById(1);
-        result.setModel("Mazda");
-        result.getEngine().setPower(500);
-        result.getEngine().setModel("Super engine");
-        dao.update(result);
-        assertThat(dao.readById(1).getModel(), is("Mazda"));
-        System.out.println("Updated: " + dao.readById(1));
-        dao.close();
+    public void update() {
+        car.setModel("Mazda");
+        dao.update(car);
+        assertThat(dao.readById(car.getId()).getModel(), is("Mazda"));
     }
-
 }

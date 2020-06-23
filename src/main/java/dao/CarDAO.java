@@ -9,8 +9,6 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 public class CarDAO implements DAO<Car, Integer> {
@@ -78,18 +76,24 @@ public class CarDAO implements DAO<Car, Integer> {
 
     @Override
     public Car readById(Integer integer) {
-            return tx(
-                    session -> session.createQuery("from " + Car.class.getName(), Car.class).getSingleResult()
-            );
-        }
+        return tx(
+                session -> session.createQuery("from " + Car.class.getName(), Car.class).getSingleResult()
+        );
+    }
+
     @Override
     public Car readByName(String name) {
         return null;
     }
 
     @Override
-    public void update(Car car) {
-
+    public boolean update(Car car) {
+        return tx(
+                session -> {
+                    session.update(car);
+                    return true;
+                }
+        );
     }
 
 
