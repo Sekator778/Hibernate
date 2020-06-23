@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Sekator778/Todo_list.svg?branch=master)](https://travis-ci.org/Sekator778/Todo_list)
+
 <div >
 <h2>Cars</h2>
 Example:
@@ -6,6 +8,5 @@ Example:
 - one-to-many
 - many-to-many
 <p>
-[![Build Status](https://travis-ci.org/Sekator778/Todo_list.svg?branch=master)](https://travis-ci.org/Sekator778/Todo_list)
 </p>
 </div>
