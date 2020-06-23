@@ -22,8 +22,8 @@
         <!-- Select our SQL dialect -->
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL10Dialect</property>
 
-        <mapping resource="model/Car.hbm.xml" />
-        <mapping resource="model/Engine.hbm.xml" />
+        <mapping class="model.Car" />
+        <mapping class="model.Engine" />
 
     </session-factory>
 </hibernate-configuration>

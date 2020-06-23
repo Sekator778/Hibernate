@@ -1,13 +1,17 @@
 package model;
 
+import javax.persistence.*;
 
-/**
- *
- */
+@Entity
+@Table(name = "cars")
 public class Car {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String mark;
     private String model;
+    @ManyToOne()
+    @JoinColumn(name = "engine_id", foreignKey = @ForeignKey(name = "id"))
     private Engine engine;
 
     public Car() {

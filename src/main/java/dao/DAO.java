@@ -1,10 +1,10 @@
 package dao;
 
 public interface DAO<Entity, Key> {
-    void create(Entity entity);
+    boolean create(Entity entity);
     Entity readById(Key key);
     Entity readByName(String name);
-    void update(Entity entity);
-    void delete(Entity entity);
+    boolean update(Entity entity);
+    boolean delete(Entity entity);
     void close() throws Exception;
 }

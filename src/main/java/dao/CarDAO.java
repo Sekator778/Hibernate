@@ -1,74 +1,105 @@
 package dao;
 
 import model.Car;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import org.hibernate.Transaction;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.service.ServiceRegistry;
 
-import java.util.List;
+import java.util.function.Function;
 
-public class CarDAO implements DAO<Car, Integer>, AutoCloseable {
+public class CarDAO implements DAO<Car, Integer> {
+    private static final CarDAO INSTANCE = new CarDAO();
+
     /**
-     * Connection factory to database.
+     * for release singleton
      */
-    private final SessionFactory factory;
-
-    public CarDAO(final SessionFactory factory) {
-        this.factory = factory;
+    private CarDAO() {
     }
 
-    @Override
-    public void create(final Car car) {
-        try (final Session session = factory.openSession()) {
-            session.beginTransaction();
-            session.save(car);
-            session.getTransaction().commit();
+    /**
+     * return our singleton
+     *
+     * @return instance class HbmTodo
+     */
+    public static CarDAO getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * factory for session hibernate
+     */
+    private SessionFactory createSessionFactory() {
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().
+                configure("hibernate.cfg.xml").build();
+        Metadata metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build();
+        return metadata.getSessionFactoryBuilder().build();
+    }
+
+    private <T> T tx(final Function<Session, T> command) {
+        final Session session = createSessionFactory().openSession();
+        final Transaction tx = session.beginTransaction();
+        try {
+            T rsl = command.apply(session);
+            tx.commit();
+            return rsl;
+        } catch (final Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            session.close();
         }
     }
 
     @Override
-    public Car readById(final Integer id) {
-        try (final Session session = factory.openSession()) {
-            final Car result = session.get(Car.class, id);
-            if (result != null) {
-                Hibernate.initialize(result.getEngine());
-            }
-            return result;
-        }
+    public boolean create(final Car car) {
+        return tx(
+                session -> {
+                    session.save(car);
+                    return true;
+                }
+        );
     }
 
     @Override
-    public Car readByName(final String name) {
-        try (final Session session = factory.openSession()) {
-            Car result = (Car) session.get(name, Car.class);
-            if (result != null) {
-                Hibernate.initialize(result.getEngine());
-            }
-            return result;
-        }
+    public boolean delete(Car car) {
+        return tx(
+                session -> {
+                    session.delete(car);
+                    return true;
+                }
+        );
     }
 
     @Override
-    public void update(final Car car) {
-        try (Session session = factory.openSession()) {
-            session.beginTransaction();
-            session.update(car);
-            session.getTransaction().commit();
-        }
+    public Car readById(Integer integer) {
+        return tx(
+                session -> session.createQuery("from " + Car.class.getName(), Car.class).getSingleResult()
+        );
     }
 
     @Override
-    public void delete(final Car car) {
-        try (Session session = factory.openSession()) {
-            session.beginTransaction();
-            session.delete(car);
-            session.getTransaction().commit();
-        }
+    public Car readByName(String name) {
+        return null;
     }
+
+    @Override
+    public boolean update(Car car) {
+        return tx(
+                session -> {
+                    session.update(car);
+                    return true;
+                }
+        );
+    }
+
 
     @Override
     public void close() throws Exception {
-        factory.close();
+
     }
+
 }
