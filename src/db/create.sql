@@ -1,4 +1,4 @@
-drop table if exists engines cascade ;
+drop table if exists engines cascade;
 drop table if exists cars cascade ;
 
 create table if not exists engines
