@@ -61,12 +61,11 @@ public class CarDAOTest {
         Car car = new Car();
         car.setModel("new model");
         car.setMark("new mark");
-        car.setId(2);
         Engine engine = new Engine();
         engine.setModel("new engine");
         engine.setPower(900);
-        engine.setId(2);
         car.setEngine(engine);
+        dao.create(car);
         dao.delete(car);
     }
 }
