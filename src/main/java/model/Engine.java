@@ -1,10 +1,12 @@
 package model;
 
-/**
- *
- */
+import javax.persistence.*;
 
+@Entity
+@Table(name = "engines")
 public class Engine {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String model;
     private int power;

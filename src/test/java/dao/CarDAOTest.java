@@ -2,8 +2,7 @@ package dao;
 
 import model.Car;
 import model.Engine;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,37 +10,32 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class CarDAOTest {
-    private DAO<Car, Integer> dao;
+    private Car car;
+    private CarDAO dao;
+
     @Before
     public void init() {
-        SessionFactory factory = null;
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-            dao = new CarDAO(factory);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void create() {
-        Car car = new Car();
-        car.setModel("new model");
-        car.setMark("new mark");
+        car = new Car();
+        car.setMark("Volvo");
+        car.setModel("xc60");
         Engine engine = new Engine();
-        engine.setModel("new engine");
-        engine.setPower(900);
+        engine.setModel("Diesel");
+        engine.setPower(200);
         car.setEngine(engine);
+        dao = CarDAO.getInstance();
         dao.create(car);
-        System.out.println("Created: " + dao.readById(2));
+    }
+
+    @After
+    public void shutdownTest() {
+        dao = CarDAO.getInstance();
+        dao.delete(car);
     }
 
     @Test
-    public void read() throws Exception {
-        final Car readById = dao.readById(1);
-        System.out.println("Read: " + readById);
-        dao.close();
-        assertThat(readById.getMark(), is("new mark"));
+    public void read() {
+        dao = CarDAO.getInstance();
+        assertThat(dao.readById(car.getId()).getModel(), is("xc60"));
     }
 
     @Test
@@ -56,16 +50,4 @@ public class CarDAOTest {
         dao.close();
     }
 
-    @Test
-    public void delete() {
-        Car car = new Car();
-        car.setModel("new model");
-        car.setMark("new mark");
-        Engine engine = new Engine();
-        engine.setModel("new engine");
-        engine.setPower(900);
-        car.setEngine(engine);
-        dao.create(car);
-        dao.delete(car);
-    }
 }
