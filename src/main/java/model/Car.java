@@ -1,6 +1,9 @@
 package model;
 
 
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,8 +14,9 @@ public class Car {
     private int id;
     private String mark;
     private String model;
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "engine_id")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
     private Engine engine;
 
     public Car() {
