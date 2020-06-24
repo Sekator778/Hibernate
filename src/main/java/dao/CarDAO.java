@@ -1,6 +1,7 @@
 package dao;
 
 import model.Car;
+import model.Engine;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -35,7 +36,10 @@ public class CarDAO implements DAO<Car, Integer> {
     private SessionFactory createSessionFactory() {
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().
                 configure("hibernate.cfg.xml").build();
-        Metadata metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build();
+        Metadata metadata = new MetadataSources(serviceRegistry)
+                .addAnnotatedClass(Car.class)
+                .addAnnotatedClass(Engine.class)
+                .getMetadataBuilder().build();
         return metadata.getSessionFactoryBuilder().build();
     }
 
@@ -59,6 +63,15 @@ public class CarDAO implements DAO<Car, Integer> {
         return tx(
                 session -> {
                     session.save(car);
+                    return true;
+                }
+        );
+    }
+
+    public void persist(Object entity) {
+        tx(
+                session -> {
+                    session.persist(entity);
                     return true;
                 }
         );

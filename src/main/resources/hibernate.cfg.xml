@@ -22,6 +22,9 @@
         <!-- Select our SQL dialect -->
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL10Dialect</property>
 
+        <property name="hibernate.hbm2ddl.auto">create</property>
+
+
         <mapping class="model.Car" />
         <mapping class="model.Engine" />
 
