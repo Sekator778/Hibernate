@@ -13,6 +13,15 @@ public class Engine {
     public Engine() {
     }
 
+    public Engine(String model, int power) {
+        this.model = model;
+        this.power = power;
+    }
+
+    public Engine(String model) {
+        this.model = model;
+    }
+
     public int getId() {
         return id;
     }

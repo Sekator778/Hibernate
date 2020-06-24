@@ -1,18 +1,50 @@
 package model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true)
     private String mark;
+    @Column(nullable = false)
     private String model;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "engine_id", foreignKey = @ForeignKey(name = "id"))
     private Engine engine;
+    @ManyToMany(mappedBy = "cars")
+    private Set<Driver> drivers;
 
     public Car() {
+    }
+
+    public Car(String mark, String model, Engine engine, Set<Driver> drivers) {
+        this.mark = mark;
+        this.model = model;
+        this.engine = engine;
+        this.drivers = drivers;
+    }
+
+    public Car(String model, Engine engine) {
+        this.model = model;
+        this.engine = engine;
+    }
+
+    public Car(String mark, String model, Engine engine) {
+        this.mark = mark;
+        this.model = model;
+        this.engine = engine;
+    }
+
+    public Set<Driver> getDrivers() {
+        return drivers;
+    }
+
+    public void setDrivers(Set<Driver> drivers) {
+        this.drivers = drivers;
     }
 
     public int getId() {
@@ -54,6 +86,7 @@ public class Car {
                 ", mark='" + mark + '\'' +
                 ", model='" + model + '\'' +
                 ", engine=" + engine +
+                ", drivers=" + drivers +
                 '}';
     }
 
