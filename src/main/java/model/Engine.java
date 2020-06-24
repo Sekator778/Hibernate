@@ -3,7 +3,6 @@ package model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "engines")
 public class Engine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,5 +44,25 @@ public class Engine {
                 ", model='" + model + '\'' +
                 ", power=" + power +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Engine engine = (Engine) o;
+
+        if (id != engine.id) return false;
+        if (power != engine.power) return false;
+        return model != null ? model.equals(engine.model) : engine.model == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (model != null ? model.hashCode() : 0);
+        result = 31 * result + power;
+        return result;
     }
 }

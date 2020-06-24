@@ -27,6 +27,8 @@
 
         <mapping class="model.Car" />
         <mapping class="model.Engine" />
+        <mapping class="model.HomeAddress" />
+        <mapping class="model.Person" />
 
     </session-factory>
 </hibernate-configuration>

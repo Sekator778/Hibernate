@@ -3,7 +3,6 @@ package model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "cars")
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,7 +10,6 @@ public class Car {
     private String mark;
     private String model;
     @ManyToOne()
-    @JoinColumn(name = "engine_id", foreignKey = @ForeignKey(name = "id"))
     private Engine engine;
 
     public Car() {
@@ -57,5 +55,27 @@ public class Car {
                 ", model='" + model + '\'' +
                 ", engine=" + engine +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Car car = (Car) o;
+
+        if (id != car.id) return false;
+        if (mark != null ? !mark.equals(car.mark) : car.mark != null) return false;
+        if (model != null ? !model.equals(car.model) : car.model != null) return false;
+        return engine != null ? engine.equals(car.engine) : car.engine == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (mark != null ? mark.hashCode() : 0);
+        result = 31 * result + (model != null ? model.hashCode() : 0);
+        result = 31 * result + (engine != null ? engine.hashCode() : 0);
+        return result;
     }
 }
