@@ -8,6 +8,7 @@ public class Engine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String model;
+    @Column(unique = true, nullable = false)
     private int power;
 
     public Engine() {
@@ -50,8 +51,6 @@ public class Engine {
     public String toString() {
         return "Engine{" +
                 "id=" + id +
-                ", model='" + model + '\'' +
-                ", power=" + power +
                 '}';
     }
 

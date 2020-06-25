@@ -11,6 +11,7 @@ public class Driver {
     @Id
     @GeneratedValue
     private int id;
+    @Column(nullable = false)
     private String name;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Car> cars;

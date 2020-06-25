@@ -17,30 +17,36 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class CarTest {
-    private Car car1 = new Car();
-    private Car car2 = new Car();
+    private Engine engine1;
+    private Engine engine2;
+    private Car car1;
+    private Car car2;
+    private Car car3;
+    private Car car4;
+    private Driver driver1;
+    private Driver driver2;
+    private Driver driver3;
     private final StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
     private final SessionFactory sessionFactory = new MetadataSources(serviceRegistry).buildMetadata().buildSessionFactory();
     private final Session session = sessionFactory.openSession();
 
     @Before
     public void init() {
-        Engine engine1 = new Engine("diesel", 200);
-        Engine engine2 = new Engine("hibrid", 123);
-        Driver driver = new Driver("Aleg");
-        Driver driver0 = new Driver("Petr");
-        car1 = new Car("Volvo", "xc90", engine2, Set.of(driver));
-        car2 = new Car("Mazda", "6", engine1, Set.of(driver, driver0));
-        Car car3 = new Car("Opel", "combo", engine1, Set.of(driver0));
-        Car car4 = new Car("Toyota", "Auris", engine2);
-        Driver driver1 = new Driver("Alex", Set.of(car1, car2));
-        Driver driver2 = new Driver("Olga", Set.of(car3, car4));
-        Driver driver3 = new Driver("Bob", Set.of(car1, car4));
+        engine1 = new Engine("diesel", 200);
+        engine2 = new Engine("hibrid", 123);
+
+        car1 = new Car("Volvo", "xc90", engine2);
+        car2 = new Car("Mazda", "6", engine1);
+        car3 = new Car("Opel", "combo", engine1);
+        car4 = new Car("Toyota", "Auris", engine2);
+
+        driver1 = new Driver("Alex", Set.of(car1, car2));
+        driver2 = new Driver("Olga", Set.of(car3, car4)); //car3 only
+        driver3 = new Driver("Bob", Set.of(car1, car4));
+
         session.beginTransaction();
         session.persist(engine1);
         session.persist(engine2);
-        session.persist(driver);
-        session.persist(driver0);
         session.persist(car1);
         session.persist(car2);
         session.persist(car3);
@@ -50,10 +56,11 @@ public class CarTest {
         session.persist(driver3);
         session.getTransaction().commit();
     }
-    @After
-    public void close() {
-        session.close();
-    }
+
+//    @After
+//    public void close() {
+//        session.close();
+//    }
 
     @Test
     public void create() {
@@ -82,20 +89,14 @@ public class CarTest {
     @Test
     public void delete() {
         session.beginTransaction();
-        Query q1 = session.createQuery("delete from Driver d where d.name like :driverName");
-        q1.setParameter("driverName", "Aleg");
-        q1.executeUpdate();
-        Query q2 = session.createQuery("delete from Driver d where d.name like :driverName");
-        q2.setParameter("driverName", "Petr");
-        q2.executeUpdate();
-
-        Query q3 = session.createQuery("select c From Car c where c.model like :modelName");
-        q3.setParameter("modelName", "6");
-        Car car = (Car) q3.getSingleResult();
-        Set<Driver> drivers = car.getDrivers();
+        Query query = session.createQuery("delete From Driver d where d.name like :driver");
+        query.setParameter("driver", "Olga");
+        query.executeUpdate();
+        Query q = session.createQuery("select c From Car c where c.model like :model");
+        q.setParameter("model", "combo");
+        Car result = (Car) q.getSingleResult();
+        Set<Driver> drivers = result.getDrivers();
         session.getTransaction().commit();
-        System.out.println("=================================");
-       drivers.forEach(System.out::println);
-//        assertTrue(drivers.isEmpty());
+        assertNull(drivers);
     }
 }
